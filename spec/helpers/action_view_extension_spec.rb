@@ -16,10 +16,22 @@ describe 'Kaminari::ActionViewExtension', :if => defined?(Rails)do
       end
     end
 
+    context 'accepts :theme option' do
+      before { helper.controller.append_view_path "spec/fake_app/views" }
+      subject { helper.paginate @users, :theme => "bootstrap", :params => {:controller => 'users', :action => 'index'} }
+      it { should match(/bootstrap-paginator/) }
+      it { should match(/bootstrap-page-link/) }
+    end
+
     context 'accepts :view_prefix option' do
       before { helper.controller.append_view_path "spec/fake_app/views" }
       subject { helper.paginate @users, :views_prefix => "alternative/", :params => {:controller => 'users', :action => 'index'} }
       it { should eq("  <b>1</b>\n") }
+    end
+
+    context "num_pages: 3" do
+      subject { helper.paginate @users, :num_pages => 3, :params => {:controller => 'users', :action => 'index'} }
+      it { should match(/<a href="\/users\?page=3">Last/) }
     end
   end
 
